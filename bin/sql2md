@@ -1,13 +1,79 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "bundler/setup"
+# Adiciona a pasta lib ao caminho para não precisar de bundle exec sempre
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
-# Ensina o Ruby a olhar na pasta "lib" antes de procurar as coisas
-$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
-# ---------------------------
+require "thor"
+require "tty-spinner"
+require "pastel"
+require "sql_to_md"
 
-require "sql_to_md/cli"
+module SqlToMd
+  # CLI Principal
+  class CLI < Thor
+    def self.exit_on_failure?
+      true
+    end
 
-# Inicia a CLI
+    desc "convert ARQUIVO", "Converte JSON ou CSV para Markdown"
+    def convert(path)
+      start_processing
+      result = execute_conversion(path)
+      display_success(result)
+    rescue StandardError => e
+      handle_error(e, path)
+    end
+
+    private
+
+    # --- Lógica de Negócio ---
+
+    def execute_conversion(path)
+      sleep(0.5) # Simulação de carregamento para UX
+      SqlToMd::Converter.new(path).call
+    end
+
+    # --- Tratamento de Erros ---
+
+    def handle_error(error, path)
+      spinner.error(pastel.red("Falha!"))
+      message = error_message_for(error, path)
+      puts pastel.red("❌ Erro: #{message}")
+      exit(1)
+    end
+
+    def error_message_for(error, path)
+      case error
+      when Errno::ENOENT
+        "Arquivo '#{path}' não encontrado."
+      when SqlToMd::Error
+        error.message
+      else
+        "Erro inesperado: #{error.message}"
+      end
+    end
+
+    # --- Interface Visual (UI) ---
+
+    def start_processing
+      spinner.auto_spin
+    end
+
+    def display_success(result)
+      spinner.success(pastel.green("Sucesso!"))
+      puts "\n#{result}"
+    end
+
+    # Memoization: Cria o objeto uma vez e reutiliza (@spinner ||=)
+    def spinner
+      @spinner ||= TTY::Spinner.new("[:spinner] Processando arquivo...", format: :dots)
+    end
+
+    def pastel
+      @pastel ||= Pastel.new
+    end
+  end
+end
+
 SqlToMd::CLI.start(ARGV)

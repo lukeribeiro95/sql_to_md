@@ -1,5 +1,58 @@
 [
-  {"id": 1, "nome": "Lucas", "cidade": "Curitiba", "Idade": "30"},
-  {"id": 2, "nome": "Raul", "cidade": "Araucaria", "Idade": "34"},
-  {"id": 3, "nome": "Alisson", "cidade": "São paulo", "Idade": "40"}
+  {
+    "ID": "srv-001",
+    "Hostname": "prod-api-gateway-01",
+    "IP Address": "10.0.12.5",
+    "Region": "us-east-1",
+    "Status": "Running",
+    "Uptime": "45d 12h"
+  },
+  {
+    "ID": "srv-002",
+    "Hostname": "prod-api-gateway-02",
+    "IP Address": "10.0.12.6",
+    "Region": "us-east-1",
+    "Status": "Running",
+    "Uptime": "45d 11h"
+  },
+  {
+    "ID": "db-m-01",
+    "Hostname": "prod-postgres-primary",
+    "IP Address": "10.0.50.10",
+    "Region": "us-east-1",
+    "Status": "Active",
+    "Uptime": "120d 04h"
+  },
+  {
+    "ID": "db-r-01",
+    "Hostname": "prod-postgres-replica",
+    "IP Address": "10.0.50.11",
+    "Region": "us-east-2",
+    "Status": "Syncing",
+    "Uptime": "119d 22h"
+  },
+  {
+    "ID": "redis-01",
+    "Hostname": "cache-cluster-alpha",
+    "IP Address": "192.168.0.55",
+    "Region": "us-west-2",
+    "Status": "Running",
+    "Uptime": "15d 08h"
+  },
+  {
+    "ID": "wrk-099",
+    "Hostname": "worker-background-jobs",
+    "IP Address": "10.20.0.100",
+    "Region": "sa-east-1",
+    "Status": "Maintenance",
+    "Uptime": "0d 00h"
+  },
+  {
+    "ID": "mon-001",
+    "Hostname": "grafana-monitoring",
+    "IP Address": "172.16.10.2",
+    "Region": "eu-central-1",
+    "Status": "Running",
+    "Uptime": "200d 01h"
+  }
 ]

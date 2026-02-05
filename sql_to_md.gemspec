@@ -33,6 +33,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Dependências (Ordem alfabética para o RuboCop não reclamar)
+  spec.add_dependency "csv"
+  spec.add_dependency "pastel"
   spec.add_dependency "json"
   spec.add_dependency "thor"
+  spec.add_dependency "tty-spinner"
 end

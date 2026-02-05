@@ -2,14 +2,17 @@
 
 ![Ruby CI](https://github.com/lukeribeiro95/sql_to_md/actions/workflows/main.yml/badge.svg)
 
-Uma ferramenta CLI (Linha de Comando) robusta para converter arrays de dados (estilo SQL/JSON) em tabelas Markdown perfeitamente formatadas. Ideal para documentação técnica e relatórios rápidos.
+Uma ferramenta CLI (Linha de Comando) robusta e extensível para converter dados brutos (**JSON** e **CSV**) em tabelas Markdown perfeitamente formatadas.
+
+Ideal para desenvolvedores que precisam gerar relatórios técnicos, documentação de APIs ou migrar dados de planilhas para documentação (GitHub/Jira/Notion) em segundos.
 
 ## 🚀 Funcionalidades
 
-- **Conversão Automática:** Transforma listas de Hashes Ruby/JSON em tabelas Markdown.
+- **Multi-Formato:** Suporte nativo para arquivos `.json` e `.csv`.
+- **Arquitetura Plugável:** Design baseado em Plugins (Strategy Pattern), facilitando a adição de novos formatos (XML, YAML, etc) sem alterar o núcleo.
+- **UX Aprimorada:** Feedback visual com barras de progresso (spinners) e mensagens coloridas no terminal.
 - **Formatação Inteligente:** Ajusta automaticamente a largura das colunas baseada no conteúdo.
-- **CLI Intuitiva:** Interface de linha de comando simples e direta.
-- **Docker Ready:** Roda em qualquer sistema operacional sem necessidade de instalar Ruby ou configurar ambiente.
+- **Docker Ready:** Roda em container isolado, sem poluir seu sistema.
 - **Alta Qualidade:** Código testado (RSpec), padronizado (RuboCop) e com CI/CD configurado.
 
 ---
@@ -36,6 +39,9 @@ docker run --rm -v ${PWD}:/app sql_to_md ruby bin/sql2md convert dados.json
 docker run --rm -v "$(pwd):/app" sql_to_md ruby bin/sql2md convert dados.json
 ```
 
+### Exemplo com CSV
+# Windows (PowerShell)
+docker run --rm -v ${PWD}:/app sql_to_md ruby bin/sql2md convert planilha.csv
 ---
 
 ## 💎 Como Usar (Instalação Local)
@@ -48,19 +54,34 @@ Se você é um desenvolvedor Ruby e prefere rodar nativamente:
    ```
 
 2. Execute o comando:
+   # Para arquivos JSON
    ```bash
    ruby bin/sql2md convert dados.json
    ```
-
+   # Para arquivos CSV
+   ```bash
+   bundle exec ruby bin/sql2md convert planilha.csv
+   ```
 ---
 
 ## 🛠 Desenvolvimento e Testes
 
-Este projeto segue as melhores práticas de engenharia de software moderna.
+Este projeto foi construído simulando um ambiente Enterprise, com foco em extensibilidade, manutenção e SOLID.
+Padrões de Projeto (Design Patterns) utilizados:
 
-- **Testes Automatizados:** RSpec
-- **Linter / Estilo:** RuboCop
-- **CI/CD:** GitHub Actions (Roda testes a cada push)
+   - **Strategy Pattern:** Isolamento da lógica de leitura de cada formato (Parsers::JsonParser, Parsers::CsvParser), respeitando o princípio Open/Closed.
+
+   - **Factory Pattern:** Instanciação dinâmica do parser correto baseado na extensão do arquivo.
+
+   - **Service Object:** A lógica de negócio está desacoplada da interface CLI.
+
+- **Stack Tecnológica:**
+
+   - **Linguagem:** Ruby 3.x
+   - **Testes Automatizados:** RSpec (TDD)
+   - **Linter:** RuboCop (Style Guide)
+   - **CLI:** Thor & TTY-Spinner
+   - **CI/CD:** GitHub Actions (Roda testes a cada push)
 
 ### Rodando os testes (RSpec)
 

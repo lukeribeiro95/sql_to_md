@@ -1,35 +1,77 @@
 # frozen_string_literal: true
 
-# lib/sql_to_md.rb
 require_relative "sql_to_md/version"
-# Módulo principal que converte dados para Markdown
+require_relative "sql_to_md/parsers/json_parser"
+require_relative "sql_to_md/parsers/csv_parser"
+
 module SqlToMd
   class Error < StandardError; end
 
-  # Esse é o método que o usuário vai chamar: SqlToMd.convert(dados)
-  def self.convert(data)
-    # Se a lista estiver vazia, retorna uma string vazia para não quebrar
-    return "" if data.empty?
-
-    # 1. Pega as chaves do primeiro item para fazer o cabeçalho (ex: id, name, email)
-    headers = data.first.keys
-
-    # 2. Monta a linha do cabeçalho
-    # O .join(' | ') junta os itens colocando uma barra entre eles
-    header_line = "| #{headers.join(' | ')} |"
-
-    # 3. Monta a linha separadora (aquela com ---)
-    # O .map transforma cada cabeçalho em '---'
-    separator_line = "| #{headers.map { '---' }.join(' | ')} |"
-
-    # 4. Monta as linhas de dados
-    body_lines = data.map do |row|
-      # row.values pega só os valores do hash (sem as chaves)
-      "| #{row.values.join(' | ')} |"
+  class Converter
+    def initialize(file_path)
+      @file_path = file_path
+      @extension = File.extname(file_path).downcase
+      @content = File.read(file_path)
     end
 
-    # 5. Junta tudo: Cabeçalho + Separador + Linhas de dados
-    # O "\n" é a quebra de linha
-    ([header_line, separator_line] + body_lines).join("\n")
+    def call
+      # 1. Escolhe a estratégia baseada na extensão
+      parser = select_parser
+
+      # 2. Processa os dados
+      data = parser.new(@content).parse
+
+      # 3. Formata (retorna string vazia se não tiver dados)
+      return "" if data.empty?
+
+      format_markdown(data)
+    end
+
+    private
+
+    def select_parser
+      case @extension
+      when ".json" then Parsers::JsonParser
+      when ".csv"  then Parsers::CsvParser
+      else
+        raise Error, "Formato '#{@extension}' não suportado."
+      end
+    end
+
+    def format_markdown(data)
+      headers = data.first.keys
+      rows = data.map(&:values)
+      sizes = calculate_column_sizes(headers, rows)
+
+      build_table(headers, rows, sizes)
+    end
+
+    def calculate_column_sizes(headers, rows)
+      sizes = headers.map { |h| h.to_s.length }
+      rows.each do |row|
+        row.each_with_index do |cell, i|
+          sizes[i] = [sizes[i], cell.to_s.length].max
+        end
+      end
+      sizes
+    end
+
+    def build_table(headers, rows, sizes)
+      lines = []
+      lines << build_row(headers, sizes)
+      lines << build_separator(sizes)
+      rows.each { |row| lines << build_row(row, sizes) }
+      lines.join("\n")
+    end
+
+    def build_row(cells, sizes)
+      row = cells.map.with_index { |c, i| " #{c.to_s.ljust(sizes[i])} " }
+      "|#{row.join('|')}|"
+    end
+
+    def build_separator(sizes)
+      sep = sizes.map { |s| " #{'-' * s} " }
+      "|#{sep.join('|')}|"
+    end
   end
 end
