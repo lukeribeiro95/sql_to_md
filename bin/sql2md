@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+
+# Ensina o Ruby a olhar na pasta "lib" antes de procurar as coisas
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+# ---------------------------
+
+require "sql_to_md/cli"
+
+# Inicia a CLI
+SqlToMd::CLI.start(ARGV)

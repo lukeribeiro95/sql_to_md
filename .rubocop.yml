@@ -1,0 +1,25 @@
+# .rubocop.yml
+
+# Ignora conflitos de quebra de linha (Windows vs Linux)
+Layout/EndOfLine:
+  Enabled: false
+
+# Desabilita a exigência de comentários em todas as classes
+Style/Documentation:
+  Enabled: false
+
+# Ignora o problema de permissão de executável (Windows não tem chmod +x)
+Lint/ScriptPermission:
+  Enabled: false
+
+# Ignora a ordem alfabética das gems
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+# Define o padrão de strings (aspas duplas)
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# Permite blocos vazios
+Lint/EmptyBlock:
+  Enabled: false
