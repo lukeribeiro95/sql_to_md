@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "sql_to_md/version"
-require_relative "sql_to_md/parsers/json_parser"
-require_relative "sql_to_md/parsers/csv_parser"
+require_relative 'sql_to_md/version'
+require_relative 'sql_to_md/parsers/json_parser'
+require_relative 'sql_to_md/parsers/csv_parser'
 
 module SqlToMd
   class Error < StandardError; end
@@ -22,7 +22,7 @@ module SqlToMd
       data = parser.new(@content).parse
 
       # 3. Formata (retorna string vazia se não tiver dados)
-      return "" if data.empty?
+      return '' if data.empty?
 
       format_markdown(data)
     end
@@ -31,8 +31,8 @@ module SqlToMd
 
     def select_parser
       case @extension
-      when ".json" then Parsers::JsonParser
-      when ".csv"  then Parsers::CsvParser
+      when '.json' then Parsers::JsonParser
+      when '.csv'  then Parsers::CsvParser
       else
         raise Error, "Formato '#{@extension}' não suportado."
       end

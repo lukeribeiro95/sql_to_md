@@ -1,25 +1,38 @@
 # .rubocop.yml
+require:
+  - rubocop-rspec
 
-# Ignora conflitos de quebra de linha (Windows vs Linux)
-Layout/EndOfLine:
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  Exclude:
+    - 'vendor/**/*'
+    - 'bin/*'
+
+# --- Regras de RSpec ---
+
+# Permite blocos longos (essencial para Describes aninhados)
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+RSpec/NestedGroups:
+  Max: 4
+
+# --- Regras de Gemspec ---
+
+Gemspec/DevelopmentDependencies:
   Enabled: false
 
-# Desabilita a exigência de comentários em todas as classes
+# --- Regras Gerais ---
+
 Style/Documentation:
   Enabled: false
 
-# Ignora o problema de permissão de executável (Windows não tem chmod +x)
-Lint/ScriptPermission:
-  Enabled: false
+Metrics/MethodLength:
+  Max: 20
 
-# Ignora a ordem alfabética das gems
-Gemspec/OrderedDependencies:
-  Enabled: false
-
-# Define o padrão de strings (aspas duplas)
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
-# Permite blocos vazios
-Lint/EmptyBlock:
-  Enabled: false
+Metrics/AbcSize:
+  Exclude:
+    - 'spec/**/*'

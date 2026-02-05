@@ -1,68 +1,64 @@
 # frozen_string_literal: true
 
-require "sql_to_md"
+require 'sql_to_md'
 
 RSpec.describe SqlToMd do
-  it "tem um número de versão" do
-    expect(SqlToMd::VERSION).not_to be nil
+  it 'has a version number' do
+    expect(SqlToMd::VERSION).not_to be_nil
   end
-end
 
-RSpec.describe SqlToMd::Converter do
-  describe "#call" do
-    # Contexto 1: Arquivos JSON
-    context "quando o arquivo é JSON" do
-      let(:file_path) { "dados.json" }
-      let(:json_content) { '[{"Nome": "Lucas", "Role": "Dev"}]' }
+  describe 'Converter' do
+    subject(:converter) { SqlToMd::Converter.new(file_path) }
 
-      before do
-        allow(File).to receive(:read).with(file_path).and_return(json_content)
-        allow(File).to receive(:extname).with(file_path).and_return(".json")
+    describe '#call' do
+      context 'when the file is JSON' do
+        let(:file_path) { 'data.json' }
+        let(:json_content) { '[{"Name": "Lucas", "Role": "Dev"}]' }
+
+        before do
+          allow(File).to receive(:read).with(file_path).and_return(json_content)
+          allow(File).to receive(:extname).with(file_path).and_return('.json')
+        end
+
+        # :aggregate_failures permite varios expects no mesmo bloco sem o RuboCop reclamar
+        it 'converts JSON data to Markdown table correctly', :aggregate_failures do
+          result = converter.call
+
+          expect(result).to include('| Name  | Role |')
+          expect(result).to include('| ----- | ---- |')
+          expect(result).to include('| Lucas | Dev  |')
+        end
       end
 
-      it "converte dados JSON para tabela Markdown corretamente" do
-        converter = described_class.new(file_path)
-        result = converter.call
+      context 'when the file is CSV' do
+        let(:file_path) { 'data.csv' }
+        let(:csv_content) { "Name,Role\nLucas,Dev" }
 
-        expect(result).to include("| Nome  | Role |")
-        expect(result).to include("| ----- | ---- |")
-        expect(result).to include("| Lucas | Dev  |")
-      end
-    end
+        before do
+          allow(File).to receive(:read).with(file_path).and_return(csv_content)
+          allow(File).to receive(:extname).with(file_path).and_return('.csv')
+        end
 
-    # Contexto 2: Arquivos CSV
-    context "quando o arquivo é CSV" do
-      let(:file_path) { "dados.csv" }
-      let(:csv_content) { "Nome,Role\nLucas,Dev" }
+        it 'converts CSV data to Markdown table correctly', :aggregate_failures do
+          result = converter.call
 
-      before do
-        allow(File).to receive(:read).with(file_path).and_return(csv_content)
-        allow(File).to receive(:extname).with(file_path).and_return(".csv")
+          expect(result).to include('| Name  | Role |')
+          expect(result).to include('| ----- | ---- |')
+          expect(result).to include('| Lucas | Dev  |')
+        end
       end
 
-      it "converte dados CSV para tabela Markdown corretamente" do
-        converter = described_class.new(file_path)
-        result = converter.call
+      context 'when the format is not supported' do
+        let(:file_path) { 'image.png' }
 
-        expect(result).to include("| Nome  | Role |")
-        expect(result).to include("| ----- | ---- |")
-        expect(result).to include("| Lucas | Dev  |")
-      end
-    end
+        before do
+          allow(File).to receive(:read).with(file_path).and_return('')
+          allow(File).to receive(:extname).with(file_path).and_return('.png')
+        end
 
-    # Contexto 3: Tratamento de Erro
-    context "quando o formato não é suportado" do
-      let(:file_path) { "imagem.png" }
-
-      before do
-        allow(File).to receive(:read).with(file_path).and_return("")
-        allow(File).to receive(:extname).with(file_path).and_return(".png")
-      end
-
-      it "lança um erro específico" do
-        expect {
-          described_class.new(file_path).call
-        }.to raise_error(SqlToMd::Error, /não suportado/)
+        it 'raises a specific error' do
+          expect { converter.call }.to raise_error(SqlToMd::Error, /não suportado/)
+        end
       end
     end
   end

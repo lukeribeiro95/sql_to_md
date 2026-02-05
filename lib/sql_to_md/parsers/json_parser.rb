@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "json"
-require_relative "base"
+require 'json'
+require_relative 'base'
 
 module SqlToMd
   module Parsers
@@ -9,7 +9,7 @@ module SqlToMd
       def parse
         JSON.parse(@content, symbolize_names: true)
       rescue JSON::ParserError
-        raise SqlToMd::Error, "O arquivo não é um JSON válido."
+        raise SqlToMd::Error, 'O arquivo não é um JSON válido.'
       end
     end
   end

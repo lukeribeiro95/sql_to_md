@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "csv"
-require_relative "base"
+require 'csv'
+require_relative 'base'
 
 module SqlToMd
   module Parsers
@@ -10,7 +10,7 @@ module SqlToMd
         # Converte CSV para lista de Hashes (igual ao JSON)
         CSV.parse(@content, headers: true).map(&:to_h)
       rescue CSV::MalformedCSVError
-        raise SqlToMd::Error, "O arquivo não é um CSV válido."
+        raise SqlToMd::Error, 'O arquivo não é um CSV válido.'
       end
     end
   end
