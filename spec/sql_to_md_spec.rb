@@ -8,7 +8,6 @@ RSpec.describe SqlToMd do
   end
 end
 
-# Testando a Classe Converter (A Gerente)
 RSpec.describe SqlToMd::Converter do
   describe "#call" do
     # Contexto 1: Arquivos JSON
@@ -17,19 +16,16 @@ RSpec.describe SqlToMd::Converter do
       let(:json_content) { '[{"Nome": "Lucas", "Role": "Dev"}]' }
 
       before do
-        # MOCK: Fingimos que o arquivo existe e tem conteúdo
-        # Isso evita criar arquivos reais no disco durante o teste
         allow(File).to receive(:read).with(file_path).and_return(json_content)
         allow(File).to receive(:extname).with(file_path).and_return(".json")
       end
 
-      it "converts JSON data to Markdown table correctly" do
+      it "converte dados JSON para tabela Markdown corretamente" do
         converter = described_class.new(file_path)
         result = converter.call
 
-        # Verifica se o resultado contem partes da tabela Markdown
         expect(result).to include("| Nome  | Role |")
-        expect(result).to include("|-------|------|")
+        expect(result).to include("| ----- | ---- |")
         expect(result).to include("| Lucas | Dev  |")
       end
     end
@@ -44,12 +40,12 @@ RSpec.describe SqlToMd::Converter do
         allow(File).to receive(:extname).with(file_path).and_return(".csv")
       end
 
-      it "converts CSV data to Markdown table correctly" do
+      it "converte dados CSV para tabela Markdown corretamente" do
         converter = described_class.new(file_path)
         result = converter.call
 
         expect(result).to include("| Nome  | Role |")
-        expect(result).to include("|-------|------|")
+        expect(result).to include("| ----- | ---- |")
         expect(result).to include("| Lucas | Dev  |")
       end
     end
@@ -63,7 +59,7 @@ RSpec.describe SqlToMd::Converter do
         allow(File).to receive(:extname).with(file_path).and_return(".png")
       end
 
-      it "luança um erro específico" do
+      it "lança um erro específico" do
         expect {
           described_class.new(file_path).call
         }.to raise_error(SqlToMd::Error, /não suportado/)
