@@ -39,9 +39,11 @@ docker run --rm -v ${PWD}:/app sql_to_md ruby bin/sql2md convert dados.json
 docker run --rm -v "$(pwd):/app" sql_to_md ruby bin/sql2md convert dados.json
 ```
 
-### Exemplo com CSV
-# Windows (PowerShell)
+**Exemplo com CSV**
+**Windows (PowerShell)**
+```bash
 docker run --rm -v ${PWD}:/app sql_to_md ruby bin/sql2md convert planilha.csv
+```
 ---
 
 ## 💎 Como Usar (Instalação Local)
